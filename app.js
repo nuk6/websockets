@@ -19,7 +19,7 @@ const totalSocketsConnected = {};
 io.on('connection', (clientSocket) => {
     const clientSocketId = clientSocket.id;
     console.log(`Client Socket is ${clientSocketId} with total ${Object.keys(totalSocketsConnected).length+1} clients`);
-    totalSocketsConnected[clientSocketId] = true;
+    totalSocketsConnected[clientSocketId] = clientSocket;
     
     io.emit('clients-total', Object.keys(totalSocketsConnected).length)
 
@@ -27,6 +27,10 @@ io.on('connection', (clientSocket) => {
         console.log(`Client with id ${clientSocketId} left`)
         delete totalSocketsConnected[clientSocketId]
         io.emit('clients-total', Object.keys(totalSocketsConnected).length)
+    })
+
+    clientSocket.on('messageFromAClient', (dataReceived) => {
+        clientSocket.broadcast.emit('messageFromAnotherClient', dataReceived);
     })
 
 })
