@@ -21,9 +21,12 @@ io.on('connection', (clientSocket) => {
     console.log(`Client Socket is ${clientSocketId} with total ${Object.keys(totalSocketsConnected).length+1} clients`);
     totalSocketsConnected[clientSocketId] = true;
     
+    io.emit('clients-total', Object.keys(totalSocketsConnected).length)
+
     clientSocket.on('disconnect', () => {
         console.log(`Client with id ${clientSocketId} left`)
         delete totalSocketsConnected[clientSocketId]
+        io.emit('clients-total', Object.keys(totalSocketsConnected).length)
     })
 
 })
